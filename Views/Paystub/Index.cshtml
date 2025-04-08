@@ -1,0 +1,44 @@
+﻿@model List<payfish.Models.Paystub>
+@{
+    ViewBag.Title = "لیست فیش‌های حقوقی";
+    var allMonths = Enumerable.Range(1, 12); // ماه‌های ۱ تا ۱۲
+    var year = DateTime.Now.Year;
+    var monthNames = new[] {
+    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+};
+
+}
+
+<h2 class="text-center mb-4">فیش‌های حقوقی: @ViewBag.EmployeeName</h2>
+
+<table class="table table-bordered text-center">
+    <thead class="table-light">
+        <tr>
+            <th>ماه</th>
+            <th>وضعیت</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var month in allMonths)
+        {
+            var stub = Model.FirstOrDefault(p => p.Month == month && p.Year == year);
+            <tr>
+                <td>@monthNames[month - 1] / @year</td>
+                <td>
+                    @if (stub != null)
+                    {
+                        <a class="btn btn-success btn-sm"
+                           href="@Url.Action("ViewPaystub", "Paystub", new { id = stub.EmployeeId, year = stub.Year, month = stub.Month })">
+                            مشاهده فیش
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">فیش موجود نیست</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

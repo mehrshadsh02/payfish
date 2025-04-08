@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "ورود به سامانه";
+}
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="logo text-center mb-3">
+            <img src="~/images/payfish-logo.svg" alt="Payfish" width="72" height="72">
+        </div>
+        <h2 class="text-center mb-4">ورود به سامانه فیش حقوقی</h2>
+
+        <form method="post">
+            <div class="input-group">
+                <label for="code">👤 کد پرسنلی یا کد ملی</label>
+                <input type="text" id="code" name="code" placeholder="مثال: 1234567890" required />
+            </div>
+
+            <div class="input-group">
+                <label for="password">🔒 رمز عبور</label>
+                <input type="password" id="password" name="password" placeholder="رمز شخصی شما" required />
+            </div>
+
+            <button type="submit">ورود به سامانه</button>
+
+            <a href="#" class="forgot-password">رمز عبور را فراموش کرده‌ام؟</a>
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger mt-3 text-center">
+                @ViewBag.Error
+            </div>
+        }
+    </div>
+</div>

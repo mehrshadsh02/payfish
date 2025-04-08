@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "payfish", "payfish.csproj", "{3DAC4344-A5DB-45EB-B254-74475C3E3229}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3DAC4344-A5DB-45EB-B254-74475C3E3229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DAC4344-A5DB-45EB-B254-74475C3E3229}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DAC4344-A5DB-45EB-B254-74475C3E3229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DAC4344-A5DB-45EB-B254-74475C3E3229}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {927BE7B8-7CD3-4FFB-9535-616EB8EC0126}
+	EndGlobalSection
+EndGlobal

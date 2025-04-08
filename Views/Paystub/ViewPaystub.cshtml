@@ -1,0 +1,29 @@
+﻿@model payfish.Models.Paystub
+
+@{
+    ViewBag.Title = "مشاهده فیش";
+}
+
+<h2 class="text-center mb-4">
+    فیش حقوقی برای @Model.Employee.FullName - ماه @Model.Month/@Model.Year
+</h2>
+
+<!-- واترمارک -->
+<div style="position: fixed; top: 40%; left: 30%; opacity: 0.2; font-size: 40px; transform: rotate(-30deg); z-index: 999;">
+    @Model.Employee.FullName - @Model.Employee.Code
+</div>
+
+<!-- فیش PDF -->
+<iframe src="@Url.Action("Download", "Paystub", new { filePath = Model.FilePath })"
+        width="100%" height="600px" style="border: none;"></iframe>
+
+<!-- جلوگیری از اسکرین‌شات و راست‌کلیک -->
+<script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.onkeydown = function (e) {
+        if (e.key === 'PrintScreen') {
+            alert('اسکرین‌شات مجاز نیست');
+            return false;
+        }
+    }
+</script>
