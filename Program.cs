@@ -1,7 +1,9 @@
 ﻿using payfish.Data;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSession();
 
 // اتصال به دیتابیس SQLite (مناسب برای شروع ساده)
 builder.Services.AddDbContext<PayfishDbContext>(options =>
@@ -24,6 +26,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
+app.UseSession();           // باید قبل از UseAuthorization باشه
 app.UseAuthorization();
 
 app.MapControllerRoute(

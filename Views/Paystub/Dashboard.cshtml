@@ -1,16 +1,17 @@
-﻿@model List<payfish.Models.Paystub>
+﻿@model payfish.Models.Employee
+
 @{
-    ViewBag.Title = "لیست فیش‌های حقوقی";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "پنل کاربری";
     var allMonths = Enumerable.Range(1, 12); // ماه‌های ۱ تا ۱۲
     var year = DateTime.Now.Year;
     var monthNames = new[] {
-    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
-};
-
+        "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+        "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+    };
 }
 
-<h2 class="text-center mb-4">فیش‌های حقوقی: @ViewBag.EmployeeName</h2>
+<h2 class="text-center mb-4">سلام، @Model.FullName 👋</h2>
 
 <table class="table table-bordered text-center">
     <thead class="table-light">
@@ -22,7 +23,7 @@
     <tbody>
         @foreach (var month in allMonths)
         {
-            var stub = Model.FirstOrDefault(p => p.Month == month && p.Year == year);
+            var stub = Model.Paystubs.FirstOrDefault(p => p.Month == month && p.Year == year);
             <tr>
                 <td>@monthNames[month - 1] / @year</td>
                 <td>

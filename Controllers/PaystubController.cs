@@ -32,8 +32,11 @@ namespace payfish.Controllers
 
             if (employee != null)
             {
-                // هدایت به لیست فیش‌ها بعد از لاگین موفق
-                return RedirectToAction("Index", new { id = employee.Id });
+                // ذخیره در سشن
+                HttpContext.Session.SetInt32("EmployeeId", employee.Id);
+                HttpContext.Session.SetString("EmployeeName", employee.FullName);
+
+                return RedirectToAction("Dashboard");
             }
 
             ViewBag.Error = "کد یا رمز اشتباه است.";
@@ -41,20 +44,23 @@ namespace payfish.Controllers
         }
 
         // نمایش لیست فیش‌های حقوقی برای هر کارمند
-        public IActionResult Index(int id)
+        
+        public IActionResult Dashboard()
         {
+            var employeeId = HttpContext.Session.GetInt32("EmployeeId");
+            if (employeeId == null)
+                return RedirectToAction("Login");
+
             var employee = _context.Employees
                 .Include(e => e.Paystubs)
-                .FirstOrDefault(e => e.Id == id);
+                .FirstOrDefault(e => e.Id == employeeId);
 
             if (employee == null)
                 return NotFound();
 
-            ViewBag.EmployeeName = employee.FullName;
-            ViewBag.EmployeeId = employee.Id;
-
-            return View(employee.Paystubs.ToList());
+            return View(employee); // به View با نام Dashboard.cshtml میره
         }
+
 
         // دانلود فایل فیش
         public IActionResult Download(string filePath)
