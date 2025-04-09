@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\pdfs\" />
+    <Folder Include="wwwroot\paystubs\" />
   </ItemGroup>
 
   <ItemGroup>

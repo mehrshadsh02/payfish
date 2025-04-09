@@ -1,45 +1,83 @@
 ﻿@model payfish.Models.Employee
+@using System.Globalization
 
 @{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
-    ViewBag.Title = "پنل کاربری";
-    var allMonths = Enumerable.Range(1, 12); // ماه‌های ۱ تا ۱۲
-    var year = DateTime.Now.Year;
+    ViewBag.Title = "داشبورد کاربری";
+
+    var persianCalendar = new PersianCalendar();
+    var today = DateTime.Now;
+    var year = persianCalendar.GetYear(today);
+
+    var allMonths = Enumerable.Range(1, 12);
     var monthNames = new[] {
         "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
         "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
     };
 }
 
-<h2 class="text-center mb-4">سلام، @Model.FullName 👋</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">سلام، @Model.FullName 👋</h2>
+    <div class="text-muted">سال @year</div>
+</div>
 
-<table class="table table-bordered text-center">
-    <thead class="table-light">
-        <tr>
-            <th>ماه</th>
-            <th>وضعیت</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var month in allMonths)
-        {
-            var stub = Model.Paystubs.FirstOrDefault(p => p.Month == month && p.Year == year);
-            <tr>
-                <td>@monthNames[month - 1] / @year</td>
-                <td>
-                    @if (stub != null)
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-file-earmark-text me-2"></i> لیست فیش‌های حقوقی</span>
+        <select class="form-select form-select-sm" style="width: 150px;">
+            <option selected>سال جاری (@year)</option>
+            <option>@(year - 1)</option>
+        </select>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ماه</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var month in allMonths)
                     {
-                        <a class="btn btn-success btn-sm"
-                           href="@Url.Action("ViewPaystub", "Paystub", new { id = stub.EmployeeId, year = stub.Year, month = stub.Month })">
-                            مشاهده فیش
-                        </a>
+                        var stub = Model.Paystubs.FirstOrDefault(p => p.Month == month && p.Year == year);
+                        <tr>
+                            <td>@monthNames[month - 1] / @year</td>
+                            <td>
+                                @if (stub != null)
+                                {
+                                    <span class="badge bg-success">فیش موجود است</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">فیش موجود نیست</span>
+                                }
+                            </td>
+                            <td>
+                                @if (stub != null)
+                                {
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       href="@Url.Action("ViewPaystub", "Paystub", new { id = stub.EmployeeId, year = stub.Year, month = stub.Month })">
+                                        <i class="bi bi-eye"></i> مشاهده
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-success"
+                                       href="@Url.Action("Download", "Paystub", new { filePath = stub.FilePath })">
+                                        <i class="bi bi-download"></i> دانلود
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-outline-secondary" disabled>
+                                        <i class="bi bi-ban"></i> غیرفعال
+                                    </button>
+                                }
+                            </td>
+                        </tr>
                     }
-                    else
-                    {
-                        <span class="text-muted">فیش موجود نیست</span>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
