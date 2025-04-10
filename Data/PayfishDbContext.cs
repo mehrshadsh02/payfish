@@ -10,5 +10,7 @@ namespace payfish.Data
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Paystub> Paystubs { get; set; }
+        public DbSet<Admin> Admins { get; set; }
+
     }
 }
