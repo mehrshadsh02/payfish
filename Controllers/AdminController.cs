@@ -36,7 +36,13 @@ namespace payfish.Controllers
         public IActionResult Dashboard()
         {
             return View("AdminDashboard"); // 👈 نام جدید View
+
         }
 
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("IsAdminLoggedIn"); // حذف سشن
+            return RedirectToAction("Login"); // برگشت به صفحه ورود
+        }
     }
 }

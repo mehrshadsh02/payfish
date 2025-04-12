@@ -1,36 +1,114 @@
 ﻿@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewBag.Title = "داشبورد مدیریتی";
+    ViewBag.Title = "داشبورد مدیریت";
 }
 
-<div class="row">
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card border-start border-primary border-4 shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title">👥 مدیریت کارمندان</h5>
-                <p class="card-text text-muted">مشاهده و ویرایش اطلاعات پرسنل</p>
-                <a href="@Url.Action("Employees", "Admin")" class="btn btn-outline-primary">مشاهده لیست</a>
-            </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>داشبورد مدیریت</h2>
+    <div class="d-flex">
+        <div class="input-group" style="width: 250px;">
+            <input type="text" class="form-control" placeholder="جستجو...">
+            <button class="btn btn-primary" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <button class="btn btn-outline-secondary me-2">
+            <i class="fas fa-bell"></i>
+            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">3</span>
+        </button>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <div class="number">142</div>
+            <div class="label">کارمند فعال</div>
         </div>
     </div>
-
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card border-start border-success border-4 shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title">📤 بارگذاری فیش</h5>
-                <p class="card-text text-muted">بارگذاری فیش حقوقی جدید برای کارمندان</p>
-                <a href="@Url.Action("UploadPaystub", "Admin")" class="btn btn-outline-success">بارگذاری فیش</a>
-            </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <i class="fas fa-user-clock"></i>
+            <div class="number">8</div>
+            <div class="label">مرخصی امروز</div>
         </div>
     </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <div class="number">3.2B</div>
+            <div class="label">حقوق این ماه</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <i class="fas fa-birthday-cake"></i>
+            <div class="number">5</div>
+            <div class="label">تولدهای امروز</div>
+        </div>
+    </div>
+</div>
 
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card border-start border-secondary border-4 shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title">⚙️ تنظیمات</h5>
-                <p class="card-text text-muted">مدیریت تنظیمات سیستم</p>
-                <a href="#" class="btn btn-outline-secondary disabled">در دست توسعه</a>
-            </div>
+<!-- Recent Employees -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">کارمندان اخیر</h5>
+        <a href="#" class="btn btn-sm btn-primary">مشاهده همه</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th width="120">شناسه</th>
+                        <th>نام</th>
+                        <th>پست سازمانی</th>
+                        <th width="150">تاریخ استخدام</th>
+                        <th width="120">وضعیت</th>
+                        <th width="150">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>EMP-1042</td>
+                        <td>محمد رضایی</td>
+                        <td>توسعه دهنده ارشد</td>
+                        <td>1402/03/15</td>
+                        <td><span class="badge bg-success">فعال</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>EMP-1041</td>
+                        <td>فاطمه محمدی</td>
+                        <td>طراح UI/UX</td>
+                        <td>1402/02/20</td>
+                        <td><span class="badge bg-success">فعال</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>EMP-1040</td>
+                        <td>علی حسینی</td>
+                        <td>مدیر پروژه</td>
+                        <td>1401/12/05</td>
+                        <td><span class="badge bg-warning text-dark">مرخصی</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
