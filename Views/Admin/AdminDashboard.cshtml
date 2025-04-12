@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "داشبورد مدیریتی";
+}
+
+<div class="row">
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card border-start border-primary border-4 shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">👥 مدیریت کارمندان</h5>
+                <p class="card-text text-muted">مشاهده و ویرایش اطلاعات پرسنل</p>
+                <a href="@Url.Action("Employees", "Admin")" class="btn btn-outline-primary">مشاهده لیست</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card border-start border-success border-4 shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">📤 بارگذاری فیش</h5>
+                <p class="card-text text-muted">بارگذاری فیش حقوقی جدید برای کارمندان</p>
+                <a href="@Url.Action("UploadPaystub", "Admin")" class="btn btn-outline-success">بارگذاری فیش</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card border-start border-secondary border-4 shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">⚙️ تنظیمات</h5>
+                <p class="card-text text-muted">مدیریت تنظیمات سیستم</p>
+                <a href="#" class="btn btn-outline-secondary disabled">در دست توسعه</a>
+            </div>
+        </div>
+    </div>
+</div>
