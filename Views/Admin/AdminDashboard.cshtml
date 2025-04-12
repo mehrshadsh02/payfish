@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<payfish.Models.Employee>
+
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewBag.Title = "داشبورد مدیریت";
 }
@@ -12,7 +14,7 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-        <button class="btn btn-outline-secondary me-2">
+        <button class="btn btn-outline-secondary me-2 position-relative">
             <i class="fas fa-bell"></i>
             <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">3</span>
         </button>
@@ -62,51 +64,34 @@
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th width="120">شناسه</th>
+                        <th>شناسه</th>
                         <th>نام</th>
                         <th>پست سازمانی</th>
-                        <th width="150">تاریخ استخدام</th>
-                        <th width="120">وضعیت</th>
-                        <th width="150">عملیات</th>
+                        <th>تاریخ استخدام</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>EMP-1042</td>
-                        <td>محمد رضایی</td>
-                        <td>توسعه دهنده ارشد</td>
-                        <td>1402/03/15</td>
-                        <td><span class="badge bg-success">فعال</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>EMP-1041</td>
-                        <td>فاطمه محمدی</td>
-                        <td>طراح UI/UX</td>
-                        <td>1402/02/20</td>
-                        <td><span class="badge bg-success">فعال</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>EMP-1040</td>
-                        <td>علی حسینی</td>
-                        <td>مدیر پروژه</td>
-                        <td>1401/12/05</td>
-                        <td><span class="badge bg-warning text-dark">مرخصی</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
+                    @foreach (var emp in Model)
+                    {
+                        <tr>
+                            <td>@($"EMP-{emp.Id:D4}")</td>
+                            <td>@emp.FullName</td>
+                            <td>@(!string.IsNullOrWhiteSpace(emp.Position) ? emp.Position : "نامشخص")</td>
+                            <td>
+                                @(emp.HireDate > DateTime.MinValue
+                                    ? emp.HireDate.ToString("yyyy/MM/dd")
+                                    : Html.Raw("<span class='text-muted'>نامشخص</span>"))
+                            </td>
+                            <td><span class="badge bg-success">فعال</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

@@ -2,6 +2,7 @@
 using payfish.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using payfish.ViewModels.Admin;
 
 namespace payfish.Controllers
 {
@@ -35,14 +36,63 @@ namespace payfish.Controllers
 
         public IActionResult Dashboard()
         {
-            return View("AdminDashboard"); // 👈 نام جدید View
+            var recentEmployees = _context.Employees
+                .OrderByDescending(e => e.HireDate)
+                .Take(5)
+                .ToList();
 
+            return View("AdminDashboard", recentEmployees);
         }
+
 
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("IsAdminLoggedIn"); // حذف سشن
             return RedirectToAction("Login"); // برگشت به صفحه ورود
         }
+
+        public IActionResult EmployeeList()
+        {
+            var employees = _context.Employees
+                .Select(e => new EmployeeListViewModel
+                {
+                    Id = e.Id,
+                    Code = e.Code,
+                    FullName = e.FullName,
+                    HireDate = DateTime.Now, // اینو از دیتابیس اضافه می‌کنیم بعداً
+                    Position = "نامشخص",     // تستی فعلاً
+                    Status = "فعال"          // تستی فعلاً
+                }).ToList();
+
+            return View(employees);
+        }
+
+        // GET: نمایش فرم افزودن
+        [HttpGet]
+        public IActionResult AddEmployee()
+        {
+            return View();
+        }
+
+        // POST: پردازش فرم
+        [HttpPost]
+        public async Task<IActionResult> AddEmployee(AddEmployeeViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var employee = new Employee
+            {
+                Code = model.Code,
+                Password = model.Password, // می‌تونیم بعداً رمزگذاری هم اضافه کنیم
+                FullName = model.FullName
+            };
+
+            _context.Employees.Add(employee);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("EmployeeList");
+        }
+
     }
 }

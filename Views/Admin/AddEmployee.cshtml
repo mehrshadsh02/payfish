@@ -1,0 +1,32 @@
+﻿@model payfish.ViewModels.Admin.AddEmployeeViewModel
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "افزودن کارمند جدید";
+}
+
+<h2 class="mb-4">افزودن کارمند جدید</h2>
+
+<form asp-action="AddEmployee" method="post" class="needs-validation" novalidate>
+    <div class="mb-3">
+        <label asp-for="Code" class="form-label"></label>
+        <input asp-for="Code" class="form-control" />
+        <span asp-validation-for="Code" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" class="form-control" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">ثبت</button>
+    <a href="@Url.Action("EmployeesList", "Admin")" class="btn btn-secondary">انصراف</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
