@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "پنل مدیریت";
+}
+
+<h2 class="mb-4">🎯 داشبورد مدیریتی Payfish</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <a href="@Url.Action("Employees", "Admin")" class="btn btn-outline-primary w-100 mb-3">
+            👥 مدیریت کارمندان
+        </a>
+    </div>
+    <div class="col-md-6">
+        <a href="@Url.Action("UploadPaystub", "Admin")" class="btn btn-outline-success w-100 mb-3">
+            📤 بارگذاری فیش حقوقی
+        </a>
+    </div>
+</div>
