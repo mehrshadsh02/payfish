@@ -7,7 +7,7 @@ builder.Services.AddSession();
 
 // اتصال به دیتابیس SQLite (مناسب برای شروع ساده)
 builder.Services.AddDbContext<PayfishDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllersWithViews();
 
