@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using payfish.Data;
 
@@ -11,9 +12,11 @@ using payfish.Data;
 namespace payfish.Migrations
 {
     [DbContext(typeof(PayfishDbContext))]
-    partial class PayfishDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250417083946_AddLeaveTable")]
+    partial class AddLeaveTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,31 @@ namespace payfish.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Leave", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LeaveDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Leaves");
+                });
 
             modelBuilder.Entity("payfish.Models.Admin", b =>
                 {
@@ -75,30 +103,6 @@ namespace payfish.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("payfish.Models.LeaveDate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("LeaveDates");
-                });
-
             modelBuilder.Entity("payfish.Models.Paystub", b =>
                 {
                     b.Property<int>("Id")
@@ -127,10 +131,10 @@ namespace payfish.Migrations
                     b.ToTable("Paystubs");
                 });
 
-            modelBuilder.Entity("payfish.Models.LeaveDate", b =>
+            modelBuilder.Entity("Leave", b =>
                 {
                     b.HasOne("payfish.Models.Employee", "Employee")
-                        .WithMany("LeaveDates")
+                        .WithMany("Leaves")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -151,7 +155,7 @@ namespace payfish.Migrations
 
             modelBuilder.Entity("payfish.Models.Employee", b =>
                 {
-                    b.Navigation("LeaveDates");
+                    b.Navigation("Leaves");
 
                     b.Navigation("Paystubs");
                 });

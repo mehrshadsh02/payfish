@@ -3,6 +3,7 @@ using payfish.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using payfish.ViewModels.Admin;
+using Microsoft.EntityFrameworkCore;
 
 namespace payfish.Controllers
 {
@@ -60,7 +61,7 @@ namespace payfish.Controllers
                     Code = e.Code,
                     FullName = e.FullName,
                     HireDate = DateTime.Now, // اینو از دیتابیس اضافه می‌کنیم بعداً
-                    Position = "نامشخص",     // تستی فعلاً
+                    Position = e.Position,     // تستی فعلاً
                     Status = "فعال"          // تستی فعلاً
                 }).ToList();
 
@@ -84,8 +85,10 @@ namespace payfish.Controllers
             var employee = new Employee
             {
                 Code = model.Code,
-                Password = model.Password, // می‌تونیم بعداً رمزگذاری هم اضافه کنیم
-                FullName = model.FullName
+                Password = model.Password,
+                FullName = model.FullName,
+                Position = model.Position, // 👈 این خط ضروریه
+                HireDate = DateTime.Now    // می‌تونیم HireDate رو هم مقدار بدیم
             };
 
             _context.Employees.Add(employee);
@@ -94,5 +97,66 @@ namespace payfish.Controllers
             return RedirectToAction("EmployeeList");
         }
 
+        //متد های ادیت کردن کارمند ها
+        [HttpGet]
+        public IActionResult EditEmployee(int id)
+        {
+            var employee = _context.Employees
+                .Include(e => e.LeaveDates)
+                .FirstOrDefault(e => e.Id == id);
+
+            if (employee == null) return NotFound();
+
+            var viewModel = new EditEmployeeViewModel
+            {
+                Id = employee.Id,
+                FullName = employee.FullName,
+                Code = employee.Code,
+                Position = employee.Position,
+                HireDate = employee.HireDate,
+                LeaveDays = employee.LeaveDates?.ToList() ?? new List<LeaveDate>()
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditEmployee(EditEmployeeViewModel model)
+        {
+            if (model.HireDate <= DateTime.MinValue)
+            {
+                ModelState.AddModelError("HireDate", "تاریخ استخدام معتبر نیست.");
+                return View(model);
+            }
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var employee = _context.Employees.Include(e => e.LeaveDates).FirstOrDefault(e => e.Id == model.Id);
+            if (employee == null)
+                return NotFound();
+
+            // بروزرسانی اطلاعات کارمند
+            employee.FullName = model.FullName;
+            employee.Code = model.Code;
+            employee.Position = model.Position;
+            employee.HireDate = model.HireDate;
+
+            // حذف تاریخ‌های قبلی و افزودن جدید
+            _context.LeaveDates.RemoveRange(employee.LeaveDates);
+
+            employee.LeaveDates = model.LeaveDays
+                .Where(l => l.Date > DateTime.MinValue)
+                .Select(l => new LeaveDate
+                {
+                    Id = l.Id,
+                    Date = l.Date,
+                    Description = l.Description,
+                    EmployeeId = model.Id
+                }).ToList();
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("EmployeeList");
+        }
     }
 }

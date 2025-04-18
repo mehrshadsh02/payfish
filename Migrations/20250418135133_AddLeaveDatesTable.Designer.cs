@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using payfish.Data;
 
@@ -11,9 +12,11 @@ using payfish.Data;
 namespace payfish.Migrations
 {
     [DbContext(typeof(PayfishDbContext))]
-    partial class PayfishDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250418135133_AddLeaveDatesTable")]
+    partial class AddLeaveDatesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

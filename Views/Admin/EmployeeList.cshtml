@@ -22,7 +22,7 @@
                     <tr>
                         <th>شناسه</th>
                         <th>نام کامل</th>
-                        <th>کد پرسنلی</th>
+                        <th>کد ملی</th>
                         <th>تاریخ استخدام</th>
                         <th>سمت</th>
                         <th>وضعیت</th>
@@ -53,8 +53,11 @@
                                 }
                             </td>
                             <td>
-                                <a class="btn btn-sm btn-outline-primary" href="#"><i class="fas fa-eye"></i></a>
-                                <a class="btn btn-sm btn-outline-secondary" href="#"><i class="fas fa-edit"></i></a>
+                                <a class="btn btn-sm btn-outline-primary" href="    "><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("EditEmployee", "Admin", new { id = emp.Id })">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
                                 <a class="btn btn-sm btn-outline-danger" href="#"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>

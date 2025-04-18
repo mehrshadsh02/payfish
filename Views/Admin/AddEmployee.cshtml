@@ -9,19 +9,24 @@
 
 <form asp-action="AddEmployee" method="post" class="needs-validation" novalidate>
     <div class="mb-3">
-        <label asp-for="Code" class="form-label"></label>
+        <label asp-for="Code" class="form-label">کد ملی</label>
         <input asp-for="Code" class="form-control" />
         <span asp-validation-for="Code" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="Password" class="form-label"></label>
+        <label asp-for="Password" class="form-label">رمز عبور</label>
         <input asp-for="Password" class="form-control" type="password" />
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="FullName" class="form-label"></label>
+        <label asp-for="FullName" class="form-label">نام و نام خانوادگی</label>
         <input asp-for="FullName" class="form-control" />
         <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Position" class="form-label">پست سازمانی</label>
+        <input asp-for="Position" class="form-control" />
+        <span asp-validation-for="Position" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-success">ثبت</button>
     <a href="@Url.Action("EmployeesList", "Admin")" class="btn btn-secondary">انصراف</a>

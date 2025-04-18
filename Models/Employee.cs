@@ -1,4 +1,4 @@
-﻿namespace payfish.Models
+﻿    namespace payfish.Models
 {
     public class Employee
     {
@@ -9,6 +9,7 @@
         public DateTime HireDate { get; set; } = DateTime.Now; // مقدار پیش‌فرض // تاریخ استخدام
         public string Position { get; set; }   // پست سازمانی
 
+        public List<LeaveDate> LeaveDates { get; set; } = new();
         public List<Paystub> Paystubs { get; set; } // فیش‌های حقوقی
     }
 }
