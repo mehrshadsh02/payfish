@@ -7,6 +7,7 @@
         public string Password { get; set; } // رمز عبور
         public string FullName { get; set; }
         public DateTime HireDate { get; set; } = DateTime.Now; // مقدار پیش‌فرض // تاریخ استخدام
+        public string HireDateShamsi { get; set; }  // ✅ تاریخ شمسی برای ذخیره در دیتابیس
         public string Position { get; set; }   // پست سازمانی
 
         public List<LeaveDate> LeaveDates { get; set; } = new();
