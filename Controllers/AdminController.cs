@@ -121,14 +121,9 @@ namespace payfish.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditEmployee(EditEmployeeViewModel model)
+        [HttpPost]
+        public async Task<IActionResult> EditEmployee(EditEmployeeViewModel model, string HireDate)
         {
-            if (model.HireDate <= DateTime.MinValue)
-            {
-                ModelState.AddModelError("HireDate", "تاریخ استخدام معتبر نیست.");
-                return View(model);
-            }
-
             if (!ModelState.IsValid)
                 return View(model);
 
@@ -136,24 +131,33 @@ namespace payfish.Controllers
             if (employee == null)
                 return NotFound();
 
-            // بروزرسانی اطلاعات کارمند
+            // 🛠 تبدیل تاریخ شمسی به میلادی
+            if (!string.IsNullOrWhiteSpace(HireDate))
+            {
+                try
+                {
+                    var persian = new System.Globalization.PersianCalendar();
+                    var parts = HireDate.Split('/');
+                    var year = int.Parse(parts[0]);
+                    var month = int.Parse(parts[1]);
+                    var day = int.Parse(parts[2]);
+                    employee.HireDate = persian.ToDateTime(year, month, day, 0, 0, 0, 0);
+                }
+                catch
+                {
+                    ModelState.AddModelError("HireDate", "فرمت تاریخ نامعتبر است.");
+                    return View(model);
+                }
+            }
+
+            // سایر فیلدها
             employee.FullName = model.FullName;
             employee.Code = model.Code;
             employee.Position = model.Position;
-            employee.HireDate = model.HireDate;
 
-            // حذف تاریخ‌های قبلی و افزودن جدید
+            // حذف و ثبت مجدد مرخصی‌ها (در صورت نیاز)
             _context.LeaveDates.RemoveRange(employee.LeaveDates);
-
-            employee.LeaveDates = model.LeaveDays
-                .Where(l => l.Date > DateTime.MinValue)
-                .Select(l => new LeaveDate
-                {
-                    Id = l.Id,
-                    Date = l.Date,
-                    Description = l.Description,
-                    EmployeeId = model.Id
-                }).ToList();
+            employee.LeaveDates = model.LeaveDays;
 
             await _context.SaveChangesAsync();
             return RedirectToAction("EmployeeList");

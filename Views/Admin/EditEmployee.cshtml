@@ -94,8 +94,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // مقدار پیش‌فرض میلادی از سرور (در قالب yyyy-MM-dd)
-            let currentHireDate = "@(Model.HireDate > DateTime.MinValue ? Model.HireDate.ToString("yyyy/MM/dd") : "")";
+            const currentHireDate = "@(Model.HireDate > DateTime.MinValue ? Model.HireDate.ToString("yyyy/MM/dd") : "")";
 
             $("#hireDatePicker").persianDatepicker({
                 format: 'YYYY/MM/DD',
@@ -104,12 +103,25 @@
                 observer: true,
                 autoClose: true,
                 initialValue: true,
-                initialValueType: 'gregorian'
+                initialValueType: 'gregorian',
             });
 
             // مقداردهی اولیه
-            $("#hireDatePicker").persianDatepicker('setDate', currentHireDate);
+            if (currentHireDate) {
+                $("#hireDatePicker").persianDatepicker('setDate', currentHireDate);
+                $("#HireDate").val(currentHireDate); // مقدار پیش‌فرض در hidden input
+            }
+
+            // اطمینان از مقداردهی صحیح قبل از ارسال فرم
+            $("form").submit(function () {
+                const altVal = $("#hireDatePicker").persianDatepicker('getState').selected.unixDate;
+                if (altVal) {
+                    let miladi = new persianDate(altVal).toCalendar('gregorian').format('YYYY-MM-DD');
+                    $("#HireDate").val(miladi);
+                }
+            });
         });
     </script>
 }
+
 
