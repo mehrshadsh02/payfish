@@ -162,5 +162,50 @@ namespace payfish.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("EmployeeList");
         }
+
+      
+        [HttpPost]
+        [HttpPost]
+        public async Task<IActionResult> UploadPaystub(int employeeId, int Month, int Year, IFormFile paystubFile)
+        {
+            if (paystubFile == null || paystubFile.Length == 0)
+                return RedirectToAction("EditEmployee", new { id = employeeId });
+
+            var fileName = $"{employeeId}_{Year}_{Month}.pdf";
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paystubs");
+            Directory.CreateDirectory(uploadPath);
+            var fullPath = Path.Combine(uploadPath, fileName);
+
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await paystubFile.CopyToAsync(stream);
+            }
+
+            var existing = await _context.Paystubs
+                .FirstOrDefaultAsync(p => p.EmployeeId == employeeId && p.Year == Year && p.Month == Month);
+
+            if (existing != null)
+            {
+                // به‌روزرسانی
+                existing.FileName = fileName;
+                existing.UploadDate = DateTime.Now;
+            }
+            else
+            {
+                _context.Paystubs.Add(new Paystub
+                {
+                    EmployeeId = employeeId,
+                    Year = Year,
+                    Month = Month,
+                    FileName = fileName,
+                    UploadDate = DateTime.Now
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("EditEmployee", new { id = employeeId });
+        }
+
+
     }
 }

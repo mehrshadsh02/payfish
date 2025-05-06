@@ -6,10 +6,14 @@ namespace payfish.Models
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }
-        public string FilePath { get; set; }
-        public int Year { get; set; }
-        public int Month { get; set; }
+
+        public int Year { get; set; }       // مثل 1403
+        public int Month { get; set; }      // مثل 2
+
+        public string FileName { get; set; }
+        public DateTime UploadDate { get; set; }
 
         public Employee Employee { get; set; }
+
     }
 }

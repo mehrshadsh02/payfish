@@ -13,7 +13,9 @@
             public DbSet<Admin> Admins { get; set; }
             // Data/PayfishDbContext.cs
             public DbSet<LeaveDate> LeaveDates { get; set; }
- 
+         
+
+
 
     }
 }

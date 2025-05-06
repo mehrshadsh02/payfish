@@ -90,6 +90,34 @@
             </div>
         </div>
     </div>
+
+    <!-- بارگزاری فیش حقوقی  -->
+    <form asp-action="UploadPaystub" asp-controller="Admin" method="post" enctype="multipart/form-data" class="mb-4">
+        <input type="hidden" name="employeeId" value="@Model.Id" />
+
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label">ماه</label>
+                <select name="Month" class="form-select" required>
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        <option value="@m">ماه @m</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">سال</label>
+                <input name="Year" type="number" value="1403" class="form-control" required />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">فایل فیش (PDF)</label>
+                <input type="file" name="paystubFile" class="form-control" accept="application/pdf" required />
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">آپلود فیش حقوقی</button>
+    </form>
+
 </div>
 @section Scripts {
     <script>

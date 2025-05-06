@@ -6,7 +6,7 @@
         public string Code { get; set; } // کد ملی یا پرسنلی
         public string Password { get; set; } // رمز عبور
         public string FullName { get; set; }
-        public DateTime HireDate { get; set; } = DateTime.Now; // مقدار پیش‌فرض // تاریخ استخدام
+        public DateTime HireDate { get; set; } // مقدار پیش‌فرض // تاریخ استخدام
         public string Position { get; set; }   // پست سازمانی
 
         public List<LeaveDate> LeaveDates { get; set; } = new();

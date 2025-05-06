@@ -71,5 +71,19 @@ namespace payfish.Controllers
 
             return PhysicalFile(fullPath, "application/pdf");
         }
+
+        public IActionResult ViewPaystub(int id, int year, int month)
+        {
+            var paystub = _context.Paystubs
+                .FirstOrDefault(p => p.EmployeeId == id && p.Year == year && p.Month == month);
+
+            if (paystub == null || string.IsNullOrEmpty(paystub.FileName))
+                return NotFound();
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paystubs", paystub.FileName);
+
+            var mimeType = "application/pdf";
+            return PhysicalFile(filePath, mimeType);
+        }
     }
 }
