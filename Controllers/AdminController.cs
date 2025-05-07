@@ -16,6 +16,7 @@ namespace payfish.Controllers
             _context = context;
         }
 
+        // اکشن لاگین
         public IActionResult Login()
         {
             return View("AdminLogin"); // 👈 نام ویو رو صراحتاً مشخص کن
