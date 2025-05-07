@@ -4,9 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using payfish.ViewModels.Admin;
 using Microsoft.EntityFrameworkCore;
+using payfish.Security;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace payfish.Controllers
 {
+    [AdminAuthorize]
     public class AdminController : Controller
     {
         private readonly PayfishDbContext _context;
@@ -17,18 +21,21 @@ namespace payfish.Controllers
         }
 
         // اکشن لاگین
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View("AdminLogin"); // 👈 نام ویو رو صراحتاً مشخص کن
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult Login(string username, string password)
         {
             var admin = _context.Admins.FirstOrDefault(a => a.Username == username && a.Password == password);
 
             if (admin != null)
             {
+                HttpContext.Session.SetString("AdminUsername", admin.Username); // 👈 اینو اضافه کن
                 return RedirectToAction("Dashboard");
             }
 
@@ -36,6 +43,7 @@ namespace payfish.Controllers
             return View("AdminLogin"); // 👈 باز هم مشخص کن
         }
 
+        [AdminAuthorize]
         public IActionResult Dashboard()
         {
             var recentEmployees = _context.Employees
@@ -49,9 +57,10 @@ namespace payfish.Controllers
 
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("IsAdminLoggedIn"); // حذف سشن
-            return RedirectToAction("Login"); // برگشت به صفحه ورود
+            HttpContext.Session.Remove("AdminUsername"); // 👈 دقیقاً همونی که توی اتریبیوت استفاده کردی
+            return RedirectToAction("Login");
         }
+    
 
         public IActionResult EmployeeList()
         {

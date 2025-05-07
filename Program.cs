@@ -1,5 +1,6 @@
 ﻿using payfish.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,13 +26,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-
-app.UseSession();           // باید قبل از UseAuthorization باشه
+app.UseSession(); // باید قبل از UseEndpoints باشه
 app.UseAuthorization();
-
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Paystub}/{action=Login}/{id?}");
+    pattern: "{controller=Paystub}/{action=Login}/{id?}"); // ✅ استفاده صحیح
+
 
 app.Run();
