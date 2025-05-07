@@ -43,8 +43,15 @@ namespace payfish.Controllers
             return View();
         }
 
+        // اکشن خروج
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // پاک‌سازی سشن‌ها
+            return RedirectToAction("Login", "Paystub"); // اگر فرم لاگین در همین کنترلر هست
+                                                               }
+
         // نمایش لیست فیش‌های حقوقی برای هر کارمند
-        
+
         public IActionResult Dashboard()
         {
             var employeeId = HttpContext.Session.GetInt32("EmployeeId");
@@ -85,5 +92,32 @@ namespace payfish.Controllers
             var mimeType = "application/pdf";
             return PhysicalFile(filePath, mimeType);
         }
+        public IActionResult ViewPaystubInline(int id, int year, int month)
+        {
+            var paystub = _context.Paystubs.FirstOrDefault(p => p.EmployeeId == id && p.Year == year && p.Month == month);
+            if (paystub == null) return NotFound();
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paystubs", paystub.FileName);
+            var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + paystub.FileName);
+            return File(stream, "application/pdf");
+        }
+
+        private readonly IWebHostEnvironment _env;
+        public IActionResult SecureView(int id)
+        {
+            var paystub = _context.Paystubs.FirstOrDefault(p => p.Id == id);
+            if (paystub == null) return NotFound();
+
+            var path = Path.Combine(_env.WebRootPath, "paystubs", paystub.FileName);
+
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + paystub.FileName);
+            Response.Headers.Add("X-Content-Type-Options", "nosniff");
+
+            return PhysicalFile(path, "application/pdf");
+        }
+
+
     }
 }

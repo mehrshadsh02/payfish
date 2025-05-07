@@ -4,121 +4,135 @@
     ViewBag.Title = "ویرایش اطلاعات کارمند";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>ویرایش اطلاعات کارمند</h2>
-    <a href="@Url.Action("EmployeeList", "Admin")" class="btn btn-secondary">بازگشت به لیست</a>
-</div>
-
-<div class="row">
-    <!-- فرم ویرایش اطلاعات -->
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header fw-bold">اطلاعات کارمند</div>
-            <div class="card-body">
-                <form asp-action="EditEmployee" method="post">
-                    <input type="hidden" asp-for="Id" />
-
-                    <div class="mb-3">
-                        <label class="form-label">نام کامل</label>
-                        <input asp-for="FullName" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">کد ملی</label>
-                        <input asp-for="Code" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">سمت</label>
-                        <input asp-for="Position" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">تاریخ استخدام</label>
-                            <!-- ورودی قابل دید کاربر -->
-                        <input id="hireDatePicker" class="form-control" />
-                            <!-- ورودی مخفی که به مدل ارسال می‌شود -->
-                        <input type="hidden" name="HireDate" id="HireDate" />
-                     </div>
-
-                    <button type="submit" class="btn btn-success">ذخیره تغییرات</button>
-                </form>
-            </div>
-        </div>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">ویرایش اطلاعات کارمند</h2>
+        <a href="@Url.Action("EmployeeList", "Admin")" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> بازگشت به لیست
+        </a>
     </div>
 
-    <!-- جدول روزهای مرخصی -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header fw-bold d-flex justify-content-between">
-                روزهای مرخصی
-                <a href="@Url.Action("AddLeaveDay", "Admin", new { employeeId = Model.Id })" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> افزودن مرخصی
-                </a>
-            </div>
-            <div class="card-body">
-                @if (Model.LeaveDays != null && Model.LeaveDays.Any())
-                {
-                    <table class="table table-striped table-sm">
-                        <thead>
-                            <tr>
-                                <th>تاریخ</th>
-                                <th>توضیح</th>
-                                <th>عملیات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var leave in Model.LeaveDays)
-                            {
-                                <tr>
-                                    <td>@leave.Date.ToString("yyyy/MM/dd")</td>
-                                    <td>@leave.Description</td>
-                                    <td>
-                                        <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("EditLeaveDay", "Admin", new { id = leave.Id })">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a class="btn btn-sm btn-outline-danger" href="@Url.Action("DeleteLeaveDay", "Admin", new { id = leave.Id })">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p class="text-muted">مرخصی‌ای ثبت نشده است.</p>
-                }
+    <div class="row g-4">
+        <!-- اطلاعات پایه -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-bold">ویرایش اطلاعات پایه</div>
+                <div class="card-body">
+                    <form asp-action="EditEmployee" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label">نام کامل</label>
+                            <input asp-for="FullName" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">کد ملی</label>
+                            <input asp-for="Code" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">سمت</label>
+                            <input asp-for="Position" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">تاریخ استخدام</label>
+                            <input id="hireDatePicker" class="form-control" />
+                            <input type="hidden" name="HireDate" id="HireDate" />
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-save"></i> ذخیره تغییرات
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- بارگزاری فیش حقوقی  -->
-    <form asp-action="UploadPaystub" asp-controller="Admin" method="post" enctype="multipart/form-data" class="mb-4">
-        <input type="hidden" name="employeeId" value="@Model.Id" />
+        <!-- بارگذاری فیش حقوقی -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-bold">بارگذاری فیش حقوقی</div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" asp-action="UploadPaystub">
+                        <input type="hidden" name="EmployeeId" value="@Model.Id" />
 
-        <div class="row">
-            <div class="col-md-4">
-                <label class="form-label">ماه</label>
-                <select name="Month" class="form-select" required>
-                    @for (int m = 1; m <= 12; m++)
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">سال</label>
+                                <input type="number" name="Year" class="form-control" min="1400" max="1600" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">ماه</label>
+                                <select name="Month" class="form-select" required>
+                                    @for (int m = 1; m <= 12; m++)
+                                    {
+                                        <option value="@m">@("ماه " + m)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">فایل فیش (PDF)</label>
+                            <input type="file" name="File" accept="application/pdf" class="form-control" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-upload"></i> آپلود فیش حقوقی
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- لیست مرخصی -->
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center fw-bold">
+                    روزهای مرخصی
+                    <a href="@Url.Action("AddLeaveDay", "Admin", new { employeeId = Model.Id })" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> افزودن مرخصی
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.LeaveDays != null && Model.LeaveDays.Any())
                     {
-                        <option value="@m">ماه @m</option>
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>تاریخ</th>
+                                    <th>توضیح</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var leave in Model.LeaveDays)
+                                {
+                                    <tr>
+                                        <td>@leave.Date.ToString("yyyy/MM/dd")</td>
+                                        <td>@leave.Description</td>
+                                        <td>
+                                            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("EditLeaveDay", "Admin", new { id = leave.Id })">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a class="btn btn-sm btn-outline-danger" href="@Url.Action("DeleteLeaveDay", "Admin", new { id = leave.Id })">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     }
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">سال</label>
-                <input name="Year" type="number" value="1403" class="form-control" required />
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">فایل فیش (PDF)</label>
-                <input type="file" name="paystubFile" class="form-control" accept="application/pdf" required />
+                    else
+                    {
+                        <p class="text-muted text-center">مرخصی‌ای ثبت نشده است.</p>
+                    }
+                </div>
             </div>
         </div>
-
-        <button type="submit" class="btn btn-primary mt-3">آپلود فیش حقوقی</button>
-    </form>
-
+    </div>
 </div>
+
+
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -134,13 +148,11 @@
                 initialValueType: 'gregorian',
             });
 
-            // مقداردهی اولیه
             if (currentHireDate) {
                 $("#hireDatePicker").persianDatepicker('setDate', currentHireDate);
-                $("#HireDate").val(currentHireDate); // مقدار پیش‌فرض در hidden input
+                $("#HireDate").val(currentHireDate);
             }
 
-            // اطمینان از مقداردهی صحیح قبل از ارسال فرم
             $("form").submit(function () {
                 const altVal = $("#hireDatePicker").persianDatepicker('getState').selected.unixDate;
                 if (altVal) {
@@ -148,8 +160,12 @@
                     $("#HireDate").val(miladi);
                 }
             });
+
+            // Show selected file name
+            $('#paystubFile').change(function() {
+                const fileName = $(this).val().split('\\').pop();
+                $('#fileName').text(fileName || 'هیچ فایلی انتخاب نشده');
+            });
         });
     </script>
 }
-
-

@@ -13,17 +13,20 @@
     @Model.Employee.FullName - @Model.Employee.Code
 </div>
 
-@* <!-- فیش PDF --> *@
-@* <iframe src="@Url.Action("Download", "Paystub", new { filePath = Model.FilePath })" *@
-@*         width="100%" height="600px" style="border: none;"></iframe> *@
+<!-- فیش PDF --> 
+<iframe src="@Url.Action("SecureView", "Paystub", new { id = Model.Id })"
+        width="100%" height="600px" style="border: none;"></iframe>
 
 <!-- جلوگیری از اسکرین‌شات و راست‌کلیک -->
+
 <script>
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    document.onkeydown = function (e) {
-        if (e.key === 'PrintScreen') {
-            alert('اسکرین‌شات مجاز نیست');
-            return false;
-        }
-    }
+     document.addEventListener("contextmenu", e => e.preventDefault());
+     document.addEventListener("keydown", e => {
+         if (e.ctrlKey && ['p', 's', 'u'].includes(e.key.toLowerCase())) {
+             e.preventDefault();
+         }
+     });
 </script>
+
+
+
