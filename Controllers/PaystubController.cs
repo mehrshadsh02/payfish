@@ -1,123 +1,94 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using payfish.Data;
 using payfish.Models;
-using System.Linq;
+using System.Security.Claims;
 
 namespace payfish.Controllers
 {
     public class PaystubController : Controller
     {
         private readonly PayfishDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public PaystubController(PayfishDbContext context)
+        public PaystubController(PayfishDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
-        // نمایش فرم لاگین
-        public IActionResult Login()
-        {
-            return View();
-        }
+        public IActionResult Login() => View();
 
-        // پردازش فرم لاگین
         [HttpPost]
-        public IActionResult Login(string code, string password)
+        public async Task<IActionResult> Login(string code, string password)
         {
-            // بررسی کارمند از دیتابیس
             var employee = _context.Employees
-                .Include(e => e.Paystubs)
-                .FirstOrDefault(e => e.Code == code && e.Password == password);
+                 .Include(e => e.Role) // ⬅ برای دسترسی به Role.Name
+                 .FirstOrDefault(e => e.Code == code && e.Password == password);
 
             if (employee != null)
             {
-                // ذخیره در سشن
-                HttpContext.Session.SetInt32("EmployeeId", employee.Id);
-                HttpContext.Session.SetString("EmployeeName", employee.FullName);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, employee.Id.ToString()),
+                    new Claim(ClaimTypes.Name, employee.FullName),
+                    new Claim("NationalCode", employee.Code),
+                    new Claim(ClaimTypes.Role, employee.Role?.Name ?? "Employee")
+                };
 
-                return RedirectToAction("Dashboard");
+                var identity = new ClaimsIdentity(claims, "MyCookie");
+                var principal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync("MyCookie", principal);
+                    
+                return employee.Role?.Name == "Admin"
+                    ? RedirectToAction("Dashboard", "Admin")
+                    : RedirectToAction("Dashboard");
             }
-
             ViewBag.Error = "کد یا رمز اشتباه است.";
             return View();
         }
 
-        // اکشن خروج
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear(); // پاک‌سازی سشن‌ها
-            return RedirectToAction("Login", "Paystub"); // اگر فرم لاگین در همین کنترلر هست
-                                                               }
+            await HttpContext.SignOutAsync("MyCookie");
+            return RedirectToAction("Login");
+        }
 
-        // نمایش لیست فیش‌های حقوقی برای هر کارمند
-
+        [Authorize(Roles = "Employee")]
         public IActionResult Dashboard()
         {
-            var employeeId = HttpContext.Session.GetInt32("EmployeeId");
-            if (employeeId == null)
-                return RedirectToAction("Login");
+            var nationalCode = User.FindFirst("NationalCode")?.Value;
 
             var employee = _context.Employees
                 .Include(e => e.Paystubs)
-                .FirstOrDefault(e => e.Id == employeeId);
+                .FirstOrDefault(e => e.Code == nationalCode);
 
             if (employee == null)
                 return NotFound();
 
-            return View(employee); // به View با نام Dashboard.cshtml میره
+            return View(employee);
         }
 
-
-        // دانلود فایل فیش
-        public IActionResult Download(string filePath)
+        [Authorize(Roles = "Employee")]
+        public IActionResult ViewPaystubSecure(int id)
         {
-            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paystubs", filePath);
-            if (!System.IO.File.Exists(fullPath))
-                return NotFound();
+            var nationalCode = User.FindFirst("NationalCode")?.Value;
 
-            return PhysicalFile(fullPath, "application/pdf");
-        }
-
-        public IActionResult ViewPaystub(int id, int year, int month)
-        {
             var paystub = _context.Paystubs
-                .FirstOrDefault(p => p.EmployeeId == id && p.Year == year && p.Month == month);
+                .Include(p => p.Employee)
+                .FirstOrDefault(p => p.Id == id && p.Employee.Code == nationalCode);
 
-            if (paystub == null || string.IsNullOrEmpty(paystub.FileName))
+            if (paystub == null || string.IsNullOrWhiteSpace(paystub.FileName))
                 return NotFound();
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paystubs", paystub.FileName);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "PrivatePdfs", paystub.FileName);
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
 
-            var mimeType = "application/pdf";
-            return PhysicalFile(filePath, mimeType);
-        }
-        public IActionResult ViewPaystubInline(int id, int year, int month)
-        {
-            var paystub = _context.Paystubs.FirstOrDefault(p => p.EmployeeId == id && p.Year == year && p.Month == month);
-            if (paystub == null) return NotFound();
-
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paystubs", paystub.FileName);
             var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-
-            Response.Headers.Add("Content-Disposition", "inline; filename=" + paystub.FileName);
             return File(stream, "application/pdf");
         }
-
-        private readonly IWebHostEnvironment _env;
-        public IActionResult SecureView(int id)
-        {
-            var paystub = _context.Paystubs.FirstOrDefault(p => p.Id == id);
-            if (paystub == null) return NotFound();
-
-            var path = Path.Combine(_env.WebRootPath, "paystubs", paystub.FileName);
-
-            Response.Headers.Add("Content-Disposition", "inline; filename=" + paystub.FileName);
-            Response.Headers.Add("X-Content-Type-Options", "nosniff");
-
-            return PhysicalFile(path, "application/pdf");
-        }
-
-
     }
 }

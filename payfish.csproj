@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="PrivatePdfs\" />
     <Folder Include="wwwroot\paystubs\" />
   </ItemGroup>
 

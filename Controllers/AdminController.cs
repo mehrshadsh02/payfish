@@ -1,16 +1,13 @@
-﻿using payfish.Data;
-using payfish.Models;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using payfish.ViewModels.Admin;
 using Microsoft.EntityFrameworkCore;
-using payfish.Security;
-using Microsoft.AspNetCore.Authorization;
-
+using payfish.Data;
+using payfish.Models;
+using payfish.ViewModels.Admin;
 
 namespace payfish.Controllers
 {
-    [AdminAuthorize]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly PayfishDbContext _context;
@@ -20,30 +17,6 @@ namespace payfish.Controllers
             _context = context;
         }
 
-        // اکشن لاگین
-        [AllowAnonymous]
-        public IActionResult Login()
-        {
-            return View("AdminLogin"); // 👈 نام ویو رو صراحتاً مشخص کن
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public IActionResult Login(string username, string password)
-        {
-            var admin = _context.Admins.FirstOrDefault(a => a.Username == username && a.Password == password);
-
-            if (admin != null)
-            {
-                HttpContext.Session.SetString("AdminUsername", admin.Username); // 👈 اینو اضافه کن
-                return RedirectToAction("Dashboard");
-            }
-
-            ViewBag.Error = "نام کاربری یا رمز عبور اشتباه است.";
-            return View("AdminLogin"); // 👈 باز هم مشخص کن
-        }
-
-        [AdminAuthorize]
         public IActionResult Dashboard()
         {
             var recentEmployees = _context.Employees
@@ -54,14 +27,6 @@ namespace payfish.Controllers
             return View("AdminDashboard", recentEmployees);
         }
 
-
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Remove("AdminUsername"); // 👈 دقیقاً همونی که توی اتریبیوت استفاده کردی
-            return RedirectToAction("Login");
-        }
-    
-
         public IActionResult EmployeeList()
         {
             var employees = _context.Employees
@@ -70,44 +35,48 @@ namespace payfish.Controllers
                     Id = e.Id,
                     Code = e.Code,
                     FullName = e.FullName,
-                    HireDate = DateTime.Now, // اینو از دیتابیس اضافه می‌کنیم بعداً
-                    Position = e.Position,     // تستی فعلاً
-                    Status = "فعال"          // تستی فعلاً
+                    HireDate = e.HireDate,
+                    Position = e.Position,
+                    Status = "فعال"
                 }).ToList();
 
             return View(employees);
         }
 
-        // GET: نمایش فرم افزودن
         [HttpGet]
         public IActionResult AddEmployee()
         {
-            return View();
+            var model = new AddEmployeeViewModel
+            {
+                Roles = _context.Roles.ToList()
+            };
+            return View(model);
         }
 
-        // POST: پردازش فرم
         [HttpPost]
         public async Task<IActionResult> AddEmployee(AddEmployeeViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                model.Roles = _context.Roles.ToList(); // ❗برای بازگشت به فرم
                 return View(model);
+            }
 
             var employee = new Employee
             {
                 Code = model.Code,
                 Password = model.Password,
                 FullName = model.FullName,
-                Position = model.Position, // 👈 این خط ضروریه
-                HireDate = DateTime.Now    // می‌تونیم HireDate رو هم مقدار بدیم
+                Position = model.Position,
+                HireDate = DateTime.Now,
+                RoleId = model.RoleId  // 👈 این خط مهمه
             };
 
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
-
             return RedirectToAction("EmployeeList");
         }
 
-        //متد های ادیت کردن کارمند ها
         [HttpGet]
         public IActionResult EditEmployee(int id)
         {
@@ -117,55 +86,55 @@ namespace payfish.Controllers
 
             if (employee == null) return NotFound();
 
-            var viewModel = new EditEmployeeViewModel
+            var model = new EditEmployeeViewModel
             {
                 Id = employee.Id,
                 FullName = employee.FullName,
                 Code = employee.Code,
                 Position = employee.Position,
                 HireDate = employee.HireDate,
-                LeaveDays = employee.LeaveDates?.ToList() ?? new List<LeaveDate>()
+                LeaveDays = employee.LeaveDates?.ToList() ?? new List<LeaveDate>(),
+                RoleId = employee.RoleId,
+                Roles = _context.Roles.ToList()
             };
 
-            return View(viewModel);
+            return View(model);
         }
 
-        [HttpPost]
         [HttpPost]
         public async Task<IActionResult> EditEmployee(EditEmployeeViewModel model, string HireDate)
         {
             if (!ModelState.IsValid)
+            {
+                model.Roles = _context.Roles.ToList(); // ❗برای بازگشت به فرم
                 return View(model);
+            }
 
             var employee = _context.Employees.Include(e => e.LeaveDates).FirstOrDefault(e => e.Id == model.Id);
-            if (employee == null)
-                return NotFound();
+            if (employee == null) return NotFound();
 
-            // 🛠 تبدیل تاریخ شمسی به میلادی
+            // تبدیل تاریخ
             if (!string.IsNullOrWhiteSpace(HireDate))
             {
                 try
                 {
-                    var persian = new System.Globalization.PersianCalendar();
                     var parts = HireDate.Split('/');
-                    var year = int.Parse(parts[0]);
-                    var month = int.Parse(parts[1]);
-                    var day = int.Parse(parts[2]);
-                    employee.HireDate = persian.ToDateTime(year, month, day, 0, 0, 0, 0);
+                    var pc = new System.Globalization.PersianCalendar();
+                    employee.HireDate = pc.ToDateTime(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), 0, 0, 0, 0);
                 }
                 catch
                 {
                     ModelState.AddModelError("HireDate", "فرمت تاریخ نامعتبر است.");
+                    model.Roles = _context.Roles.ToList();
                     return View(model);
                 }
             }
 
-            // سایر فیلدها
             employee.FullName = model.FullName;
             employee.Code = model.Code;
             employee.Position = model.Position;
+            employee.RoleId = model.RoleId;
 
-            // حذف و ثبت مجدد مرخصی‌ها (در صورت نیاز)
             _context.LeaveDates.RemoveRange(employee.LeaveDates);
             employee.LeaveDates = model.LeaveDays;
 
@@ -173,8 +142,7 @@ namespace payfish.Controllers
             return RedirectToAction("EmployeeList");
         }
 
-      
-        [HttpPost]
+
         [HttpPost]
         public async Task<IActionResult> UploadPaystub(int employeeId, int Month, int Year, IFormFile paystubFile)
         {
@@ -182,7 +150,7 @@ namespace payfish.Controllers
                 return RedirectToAction("EditEmployee", new { id = employeeId });
 
             var fileName = $"{employeeId}_{Year}_{Month}.pdf";
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paystubs");
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "PrivatePdfs");
             Directory.CreateDirectory(uploadPath);
             var fullPath = Path.Combine(uploadPath, fileName);
 
@@ -196,7 +164,6 @@ namespace payfish.Controllers
 
             if (existing != null)
             {
-                // به‌روزرسانی
                 existing.FileName = fileName;
                 existing.UploadDate = DateTime.Now;
             }
@@ -215,7 +182,5 @@ namespace payfish.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("EditEmployee", new { id = employeeId });
         }
-
-
     }
 }

@@ -28,8 +28,15 @@
         <input asp-for="Position" class="form-control" />
         <span asp-validation-for="Position" class="text-danger"></span>
     </div>
+    <div class="mb-3">
+        <label asp-for="RoleId" class="form-label">نقش</label>
+        <select asp-for="RoleId" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))" class="form-select"></select>
+        <span asp-validation-for="RoleId" class="text-danger"></span>
+    </div>
     <button type="submit" class="btn btn-success">ثبت</button>
-    <a href="@Url.Action("EmployeesList", "Admin")" class="btn btn-secondary">انصراف</a>
+    <a href="@Url.Action("EmployeeList", "Admin")" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> انصراف
+    </a>
 </form>
 
 @section Scripts {

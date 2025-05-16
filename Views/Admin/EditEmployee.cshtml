@@ -38,6 +38,14 @@
                             <input id="hireDatePicker" class="form-control" />
                             <input type="hidden" name="HireDate" id="HireDate" />
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">نقش</label>
+                            <select asp-for="RoleId" class="form-select">
+                                <option value="Employee">کارمند</option>
+                                <option value="Admin">ادمین</option>
+                            </select>
+                        </div>
+
                         <button type="submit" class="btn btn-success w-100">
                             <i class="fas fa-save"></i> ذخیره تغییرات
                         </button>

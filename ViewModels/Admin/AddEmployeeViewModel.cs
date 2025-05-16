@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using payfish.Models;
+using System.Collections.Generic;
 
 namespace payfish.ViewModels.Admin
 {
@@ -15,6 +17,11 @@ namespace payfish.ViewModels.Admin
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "پست سازمانی الزامی است")]
-        public string Position { get; set; } // 👈 این خط باعث رفع ارور شماست
+        public string Position { get; set; }
+
+        [Required(ErrorMessage = "نقش الزامی است")]
+        public int RoleId { get; set; }  // 👈 جایگزین Role قبلی
+
+        public List<Role> Roles { get; set; } = new(); // 👈 برای Dropdown
     }
 }

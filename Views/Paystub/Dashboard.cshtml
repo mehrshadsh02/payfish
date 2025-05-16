@@ -58,11 +58,12 @@
                             <td>
                                 @if (stub != null)
                                 {
-                                    <a class="btn btn-sm btn-outline-primary"
-                                       href="@Url.Action("ViewPaystub", "Paystub", new { id = stub.EmployeeId, year = stub.Year, month = stub.Month })">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="showPaystub(@stub.Id)">
                                         <i class="bi bi-eye"></i> مشاهده
-                                    </a>
-                                                                  }
+                                    </button>
+
+
+                                 }
                                 else
                                 {
                                     <button class="btn btn-sm btn-outline-secondary" disabled>
@@ -77,6 +78,22 @@
         </div>
     </div>
 </div>
+@* //////////////اضافه کردن Modal HTML برای پاپ‌آپ *@
+
+<div class="modal fade" id="pdfModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">نمایش فیش حقوقی</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="paystubFrame" width="100%" height="600px" style="border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="row">
     <div class="col-md-6 mb-4">
@@ -123,8 +140,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // اینجا می‌توانید اسکریپت‌های سفارشی خود را اضافه کنید
-    document.addEventListener('DOMContentLoaded', function () {
-        // کدهای جاوااسکریپت برای تعاملات صفحه
-    });
+        document.getElementById("paystubFrame").onload = function () {
+        const frame = this;
+        try {
+            const frameDoc = frame.contentDocument || frame.contentWindow.document;
+            if (frameDoc.body.innerText.includes("login") || frameDoc.body.innerText.includes("ورود")) {
+                frame.contentDocument.body.innerHTML = "<div style='padding: 2rem; text-align: center;'>شما به سیستم وارد نشده‌اید.</div>";
+            }
+        } catch (e) {
+            // ممکنه به دلیل cross-origin خطا بده؛ در این حالت بررسی نمی‌کنیم
+        }
+    };
+
+    function showPaystub(id) {
+        const iframe = document.getElementById("paystubFrame");
+        iframe.src = "/Paystub/ViewPaystubSecure/" + id;
+        const modal = new bootstrap.Modal(document.getElementById("pdfModal"));
+        modal.show();
+    }
 </script>
