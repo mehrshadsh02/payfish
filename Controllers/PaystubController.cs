@@ -33,18 +33,18 @@ namespace payfish.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, employee.Id.ToString()),
-                    new Claim(ClaimTypes.Name, employee.FullName),
-                    new Claim("NationalCode", employee.Code),
+                    new Claim(ClaimTypes.Name, employee.Code), // ✅ اینجا اصلاح شد
+                    new Claim("FullName", employee.FullName),  // اختیاری
                     new Claim(ClaimTypes.Role, employee.Role?.Name ?? "Employee")
                 };
 
                 var identity = new ClaimsIdentity(claims, "MyCookie");
                 var principal = new ClaimsPrincipal(identity);
                 await HttpContext.SignInAsync("MyCookie", principal);
-                    
+
                 return employee.Role?.Name == "Admin"
                     ? RedirectToAction("Dashboard", "Admin")
-                    : RedirectToAction("Dashboard");
+                    : RedirectToAction("Dashboard", "Paystub");
             }
             ViewBag.Error = "کد یا رمز اشتباه است.";
             return View();

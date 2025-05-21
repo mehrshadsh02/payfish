@@ -27,21 +27,26 @@ namespace payfish.Controllers
             return View("AdminDashboard", recentEmployees);
         }
 
-        public IActionResult EmployeeList()
+        public async Task<IActionResult> EmployeeList()
         {
-            var employees = _context.Employees
+            var currentUserCode = User.Identity.Name;
+
+            var employees = await _context.Employees
+                .Where(e => e.Code != currentUserCode) // ❗️ کاربر خودش نمایش داده نشه
                 .Select(e => new EmployeeListViewModel
                 {
                     Id = e.Id,
-                    Code = e.Code,
                     FullName = e.FullName,
+                    Code = e.Code,
                     HireDate = e.HireDate,
                     Position = e.Position,
-                    Status = "فعال"
-                }).ToList();
+                    RoleName = e.Role.Name
+                })
+                .ToListAsync();
 
             return View(employees);
         }
+
 
         [HttpGet]
         public IActionResult AddEmployee()
