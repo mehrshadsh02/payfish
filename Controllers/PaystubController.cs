@@ -35,6 +35,7 @@ namespace payfish.Controllers
                     new Claim(ClaimTypes.NameIdentifier, employee.Id.ToString()),
                     new Claim(ClaimTypes.Name, employee.Code), // ✅ اینجا اصلاح شد
                     new Claim("FullName", employee.FullName),  // اختیاری
+                    new Claim("NationalCode", employee.Code),
                     new Claim(ClaimTypes.Role, employee.Role?.Name ?? "Employee")
                 };
 
