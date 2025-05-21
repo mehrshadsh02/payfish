@@ -69,6 +69,7 @@
                         <th>پست سازمانی</th>
                         <th>تاریخ استخدام</th>
                         <th>وضعیت</th>
+                        <th>سمت</th>
                         @* <th>عملیات</th> *@
                     </tr>
                 </thead>
@@ -85,6 +86,7 @@
                                     : Html.Raw("<span class='text-muted'>نامشخص</span>"))
                             </td>
                             <td><span class="badge bg-success">فعال</span></td>
+                            <td>@emp.Role?.DisplayName</td>
                             @* <td> *@
                             @*     <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button> *@
                             @*     <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button> *@

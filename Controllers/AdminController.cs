@@ -20,6 +20,7 @@ namespace payfish.Controllers
         public IActionResult Dashboard()
         {
             var recentEmployees = _context.Employees
+                .Include(e => e.Role)
                 .OrderByDescending(e => e.HireDate)
                 .Take(5)
                 .ToList();
@@ -71,7 +72,8 @@ namespace payfish.Controllers
             {
                 Code = model.Code,
                 Password = model.Password,
-                FullName = model.FullName,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 Position = model.Position,
                 HireDate = DateTime.Now,
                 RoleId = model.RoleId  // 👈 این خط مهمه
@@ -135,7 +137,11 @@ namespace payfish.Controllers
                 }
             }
 
-            employee.FullName = model.FullName;
+            //employee.FullName = model.FullName;
+            var names = model.FullName?.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+            employee.FirstName = names?.FirstOrDefault() ?? "";
+            employee.LastName = names?.Length > 1 ? names[1] : "";
+           
             employee.Code = model.Code;
             employee.Position = model.Position;
             employee.RoleId = model.RoleId;

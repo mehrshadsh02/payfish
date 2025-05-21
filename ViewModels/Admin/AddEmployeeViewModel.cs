@@ -13,8 +13,11 @@ namespace payfish.ViewModels.Admin
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "نام کامل الزامی است")]
-        public string FullName { get; set; }
+        [Required(ErrorMessage = "نام الزامی است")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "نام خانوادگی الزامی است")]
+        public string LastName { get; set; }
 
         [Required(ErrorMessage = "پست سازمانی الزامی است")]
         public string Position { get; set; }
